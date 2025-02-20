@@ -16,7 +16,7 @@ productRouter.get('/', (req, res) => {
 //   res.status(201).json(productServices.createProduct(req.body));
 //   res.send('product added sucesfully');
 // });
-productRouter.post('/', productRouterMiddleware, (req, res) => {
+productRouter.post('/', (req, res) => {
   res.status(201).json(productServices.createProduct(req.body));
 });
 
@@ -31,7 +31,7 @@ productRouter.put('/:id', (req, res) => {
 productRouter.delete('/:id', (req, res) => {
   const { id } = req.params;
   productServices.deleteProducts(id);
-  res.status(201).json({ message: 'product has been deleted' });
+  throw new Error('product has been deleted');
 });
 
 module.exports = productRouter;

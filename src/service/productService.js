@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const { NotFoundError } = require('../errors');
 const products = [
   // {
   //   _id: uuidv4(), //creation of unique id
@@ -52,7 +53,7 @@ const updateProducts = (id, payload) => {
   //   const payload = req.body; //updated data
   let updatedProductIndex = products.findIndex((product) => product._id === id);
   if (updatedProductIndex === -1) {
-    throw new Error(`No product exist with id ${id}`);
+    throw new NotFoundError(`no product exists with id ${id}`);
   }
   // products[updatedProductIndex].name=payload.name //destructing
   //   This updates the product at updatedProductIndex.
