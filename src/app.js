@@ -3,9 +3,10 @@ const connectDB = require('./db');
 const { productRouter, userRouter } = require('./router');
 const { configureRouter } = require('./router');
 const { logRequestMiddleware, errorHandler } = require('./middlewares');
+const config = require('./config');
 
 const app = express();
-const port = 5000;
+const port = config.PORT;
 
 connectDB();
 
