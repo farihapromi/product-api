@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const { NotFoundError } = require('../errors');
+const { Product } = require('../models');
 const products = [
   // {
   //   _id: uuidv4(), //creation of unique id
@@ -39,47 +40,70 @@ const products = [
 ];
 //create product functiom
 
-const createProduct = (productPayload) => {
-  const newProduct = { _id: uuidv4(), ...productPayload };
-  products.unshift(newProduct);
+const createProduct = async (productPayload) => {
+  const newProduct = new Product(productPayload);
+  await newProduct.save();
   return newProduct;
 };
 //get all products
-const getAllProducts = () => products;
+const getAllProducts = async () => {
+  const products = await Product.find({ deleted: false }).select(
+    '_id name price image categories'
+  );
+
+  return products;
+};
 //update prodyctrs
-const updateProducts = (id, payload) => {
-  //destrucring id
-  //   const { id } = req.params;
-  //   const payload = req.body; //updated data
-  let updatedProductIndex = products.findIndex((product) => product._id === id);
-  if (updatedProductIndex === -1) {
-    throw new NotFoundError(`no product exists with id ${id}`);
-  }
-  // products[updatedProductIndex].name=payload.name //destructing
-  //   This updates the product at updatedProductIndex.
-  // ...products[updatedProductIndex] keeps existing data.
-  // ...payload updates only the fields provided in the request body.
-  products[updatedProductIndex] = {
-    ...products[updatedProductIndex],
-    ...payload,
-  };
-  return products[updatedProductIndex];
+// const updateProducts = (id, payload) => {
+//   //destrucring id
+//   //   const { id } = req.params;
+//   //   const payload = req.body; //updated data
+//   let updatedProductIndex = products.findIndex((product) => product._id === id);
+//   if (updatedProductIndex === -1) {
+//     throw new NotFoundError(`no product exists with id ${id}`);
+//   }
+//   // products[updatedProductIndex].name=payload.name //destructing
+//   //   This updates the product at updatedProductIndex.
+//   // ...products[updatedProductIndex] keeps existing data.
+//   // ...payload updates only the fields provided in the request body.
+//   products[updatedProductIndex] = {
+//     ...products[updatedProductIndex],
+//     ...payload,
+//   };
+//   return products[updatedProductIndex];
+// };
+
+//single products
+
+const getProductById = async (id) => {
+  return await Product.findOne({ _id: id, deleted: false });
+};
+const updateProduct = async (id, payload) => {
+  return await Product.findByIdAndUpdate({ _id: id }, payload);
 };
 
 //delete products
 
-const deleteProducts = (id) => {
-  const productIndex = products.findIndex((product) => product._id === id);
-  if (productIndex === -1) {
-    return res.status(400).json({ message: `No product exist with id ${id}` });
-  }
-  //     The splice() method removes 1 item from the products array at productIndex.
-  // This permanently deletes the product from the array.
-  products.splice(productIndex, 1);
+// const deleteProducts = (id) => {
+//   const productIndex = products.findIndex((product) => product._id === id);
+//   if (productIndex === -1) {
+//     return res.status(400).json({ message: `No product exist with id ${id}` });
+//   }
+//   //     The splice() method removes 1 item from the products array at productIndex.
+//   // This permanently deletes the product from the array.
+//   products.splice(productIndex, 1);
+// };
+const deleteProducts = async (id) => {
+  await Product.findOneAndUpdate(
+    { _id: id },
+    { deleted: true, deletedAt: new Date() }
+  );
+  return true;
 };
 module.exports = {
   createProduct,
   getAllProducts,
-  updateProducts,
+  updateProduct,
+  getProductById,
   deleteProducts,
 };

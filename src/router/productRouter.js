@@ -1,12 +1,8 @@
 const express = require('express');
 
-const { productServices } = require('../service');
 const { productRouterMiddleware } = require('../middlewares');
+const { productController } = require('../controllers');
 const productRouter = express.Router();
-
-productRouter.get('/', (req, res) => {
-  res.send(productServices.getAllProducts());
-});
 
 //send data
 
@@ -16,22 +12,21 @@ productRouter.get('/', (req, res) => {
 //   res.status(201).json(productServices.createProduct(req.body));
 //   res.send('product added sucesfully');
 // });
-productRouter.post('/', (req, res) => {
-  res.status(201).json(productServices.createProduct(req.body));
-});
+productRouter.post('/', productController.createProduct);
+productRouter.get('/', productController.getAllProducts);
+
+//single product
+productRouter.get('/:id', productController.getProductById);
 
 //update
-productRouter.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const updatedProducts = productServices.updateProducts(id, req.body);
-  res.status(201).json(updatedProducts);
-});
+productRouter.put('/:id', productController.updateProducts);
 
 //deleted product
-productRouter.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  productServices.deleteProducts(id);
-  throw new Error('product has been deleted');
-});
+// productRouter.delete('/:id', (req, res) => {
+//   const { id } = req.params;
+//   productServices.deleteProducts(id);
+//   throw new Error('product has been deleted');
+// });
+productRouter.delete('/:id', productController.deleteProducts);
 
 module.exports = productRouter;
