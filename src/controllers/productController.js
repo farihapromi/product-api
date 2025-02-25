@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler');
 const createProduct = asyncHandler(async (req, res) => {
   const payload = req.body;
   const validatedPayload = ProductSchema.parse(payload);
-  const newProduct = await productServices.createProduct(validatedPayload);
+  const newProduct = await productServices.createProduct(req.body);
   res.status(201).json(newProduct);
 });
 

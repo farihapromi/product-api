@@ -2,6 +2,8 @@ const express = require('express');
 
 const { productRouterMiddleware } = require('../middlewares');
 const { productController } = require('../controllers');
+const { ProductSchema } = require('../schema');
+const { validatePayload } = require('../middlewares');
 const productRouter = express.Router();
 
 //send data
@@ -12,14 +14,24 @@ const productRouter = express.Router();
 //   res.status(201).json(productServices.createProduct(req.body));
 //   res.send('product added sucesfully');
 // });
-productRouter.post('/', productController.createProduct);
+// productRouter.post('/', productController.createProduct);
+productRouter.post(
+  '/',
+  validatePayload(ProductSchema.omit({ _id: true })),
+  productController.createProduct
+);
 productRouter.get('/', productController.getAllProducts);
 
 //single product
 productRouter.get('/:id', productController.getProductById);
 
 //update
-productRouter.put('/:id', productController.updateProducts);
+// productRouter.put('/:id', productController.updateProducts);
+productRouter.put(
+  '/:id',
+  validatePayload(ProductSchema.partial()),
+  productController.updateProducts
+);
 
 //deleted product
 // productRouter.delete('/:id', (req, res) => {
