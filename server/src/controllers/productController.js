@@ -4,13 +4,17 @@ const asyncHandler = require('express-async-handler');
 
 const createProduct = asyncHandler(async (req, res) => {
   const payload = req.body;
-  const validatedPayload = ProductSchema.parse(payload);
+
   const newProduct = await productServices.createProduct(req.body);
   res.status(201).json(newProduct);
 });
 
-const getAllProducts = asyncHandler(async (req, res) => {
-  const products = await productServices.getAllProducts();
+const getProducts = asyncHandler(async (req, res) => {
+  const { page, limit } = req.query; //for pagination
+  const products = await productServices.getProducts({
+    page: parseInt(page || '0'),
+    limit: parseInt(limit || '10'),
+  });
   res.json(products);
 });
 const updateProducts = asyncHandler(async (req, res) => {
@@ -32,7 +36,7 @@ const deleteProducts = asyncHandler(async (req, res) => {
 });
 module.exports = {
   createProduct,
-  getAllProducts,
+  getProducts,
   updateProducts,
   getProductById,
   deleteProducts,
