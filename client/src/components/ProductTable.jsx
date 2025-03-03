@@ -38,7 +38,20 @@ const columns = [
 
 
 export default function ProductTable() {
-  const {formattedRows}=useProducts()
+  const {productQuery}=useProducts()
+  
+  const formattedRows = useMemo(
+    ()=>
+    productQuery.data?.map((product,index) => ({
+      id: product._id,
+      s1:index+1,
+      name: product.name,
+      price: product.price,
+      quantity: product.quantity,
+      image: product.image
+    }))
+  
+  ,[productQuery.data]) 
  
 
 
